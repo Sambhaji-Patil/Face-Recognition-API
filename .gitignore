@@ -1,2 +1,4 @@
 .env
 stored-faces/
+api.py
+copy.txt

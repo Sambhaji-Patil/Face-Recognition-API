@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Verification System</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto p-4">
+        <header class="text-center py-6">
+            <h1 class="text-4xl font-bold text-indigo-700">Face Verification</h1>
+            <p class="text-gray-600 mt-2">Secure authentication through facial recognition</p>
+        </header>
+
+        <div class="flex flex-col md:flex-row gap-6 mt-8">
+            <!-- Registration Section -->
+            <div class="w-full md:w-1/2 bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-semibold text-indigo-600 mb-4">Register</h2>
+                <p class="text-gray-600 mb-6">Add your face to the system for future verification</p>
+                
+                <div class="mb-4">
+                    <div class="flex justify-center gap-4 mb-4">
+                        <button id="register-camera-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Use Camera
+                        </button>
+                        <button id="register-upload-btn" class="bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12" />
+                            </svg>
+                            Upload Image
+                        </button>
+                    </div>
+                    <input type="file" id="register-file-input" class="hidden" accept="image/*">
+                </div>
+
+                <div id="register-camera-container" class="hidden">
+                    <video id="register-video" class="w-full h-64 bg-black object-cover rounded-lg mb-4" autoplay playsinline></video>
+                    <button id="register-capture-btn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg w-full">
+                        Capture Image
+                    </button>
+                </div>
+
+                <div id="register-preview-container" class="hidden text-center">
+                    <div class="relative">
+                        <img id="register-preview" class="w-full h-64 object-cover rounded-lg mb-4" src="" alt="Preview">
+                    </div>
+                    <div class="flex justify-between">
+                        <button id="register-retake-btn" class="bg-gray-600 text-white px-4 py-2 rounded-lg">
+                            Retake
+                        </button>
+                        <button id="register-submit-btn" class="bg-green-600 text-white px-4 py-2 rounded-lg">
+                            Register Face
+                        </button>
+                    </div>
+                </div>
+
+                <div id="register-result" class="mt-4 p-4 rounded-lg hidden">
+                    <!-- Registration results will be displayed here -->
+                </div>
+            </div>
+
+            <!-- Verification Section -->
+            <div class="w-full md:w-1/2 bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-semibold text-blue-600 mb-4">Verify</h2>
+                <p class="text-gray-600 mb-6">Verify your identity using facial recognition</p>
+                
+                <div class="mb-4">
+                    <div class="flex justify-center gap-4 mb-4">
+                        <button id="verify-camera-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Use Camera
+                        </button>
+                        <button id="verify-upload-btn" class="bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12" />
+                            </svg>
+                            Upload Image
+                        </button>
+                    </div>
+                    <input type="file" id="verify-file-input" class="hidden" accept="image/*">
+                </div>
+
+                <div id="verify-camera-container" class="hidden">
+                    <video id="verify-video" class="w-full h-64 bg-black object-cover rounded-lg mb-4" autoplay playsinline></video>
+                    <button id="verify-capture-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg w-full">
+                        Capture Image
+                    </button>
+                </div>
+
+                <div id="verify-preview-container" class="hidden text-center">
+                    <div class="relative">
+                        <img id="verify-preview" class="w-full h-64 object-cover rounded-lg mb-4" src="" alt="Preview">
+                        <div id="scanning-animation" class="absolute top-0 left-0 w-full h-full hidden">
+                            <div class="scanner-line"></div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between">
+                        <button id="verify-retake-btn" class="bg-gray-600 text-white px-4 py-2 rounded-lg">
+                            Retake
+                        </button>
+                        <button id="verify-submit-btn" class="bg-green-600 text-white px-4 py-2 rounded-lg">
+                            Verify Face
+                        </button>
+                    </div>
+                </div>
+
+                <div id="verify-result" class="mt-4 p-4 rounded-lg hidden">
+                    <!-- Verification results will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
